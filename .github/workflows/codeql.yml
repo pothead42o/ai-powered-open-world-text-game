@@ -1,0 +1,180 @@
+import google.generativeai as genai from PIL import Image import io import base64 # Configure the Gemini API genai.configure(api_key='YOUR_GEMINI_API_KEY') # Initialize the models text_model = genai.GenerativeModel('gemini-pro') image_model = genai.GenerativeModel('gemini-pro-vision') def generate_text(prompt): response = text_model.generate_content(prompt) return response.text def generate_image(description): response = image_model.generate_content([description, "Create a detailed, high-quality image."]) if response.parts[0].image: image_data = response.parts[0].image.data image = Image.open(io.BytesIO(base64.b64decode(image_data))) return image else: return None def main(): print("Welcome to the Time and Space Traveler Game!") current_scene = "You find yourself in a futuristic city with towering skyscrapers and flying vehicles. What do you do next?" while True: print("\n" + current_scene) # Generate and display image image = generate_image(current_scene) if image: image.show() else: print("(Unable to generate image for this scene)") prompt = f"{current_scene}\nChoose your action:\nA. Explore the city\nB. Talk to a stranger\nC. Enter a building\nD. Look at the sky\nE. Check your equipment\nF. Use your time travel device\nG. Other (specify)" user_choice = input(prompt + "\nYour choice: ").strip().upper() if user_choice == 'G': user_input = input("Specify your action: ") action = user_input else: actions = { 'A': "explore the futuristic city", 'B': "approach and talk to a strange-looking alien", 'C': "enter a nearby glowing building", 'D': "look up at the sky filled with multiple moons and unfamiliar constellations", 'E': "check your advanced multi-dimensional travel equipment", 'F': "activate your time travel device to jump to a different era" } action = actions.get(user_choice, "stand still, unsure of what to do next") # Generate next scene next_scene_prompt = f"""In an open-world game about time travel, space exploration, and multi-dimensional adventures, the player is currently in a scene where: {current_scene} The player chooses to {action}. Describe what happens next in 2-3 sentences, incorporating elements of time travel, space exploration, or dimensional shifts. Be creative and unexpected, but maintain coherence with the previous scene.""" current_scene = generate_text(next_scene_prompt) if "die" in current_scene.lower() or "game over" in current_scene.lower(): print("\n" + current_scene) print("Game Over!") break if __name__ == "__main__": main()import google.generativeai as genai from PIL import Image import io import base64 # Configure the Gemini API genai.configure(api_key='YOUR_GEMINI_API_KEY') # Initialize the models text_model = genai.GenerativeModel('gemini-pro') image_model = genai.GenerativeModel('gemini-pro-vision') def generate_text(prompt): response = text_model.generate_content(prompt) return response.text def generate_image(description): response = image_model.generate_content([description, "Create a detailed, high-quality image."]) if response.parts[0].image: image_data = response.parts[0].image.data image = Image.open(io.BytesIO(base64.b64decode(image_data))) return image else: return None def main(): print("Welcome to the Time and Space Traveler Game!") current_scene = "You find yourself in a futuristic city with towering skyscrapers and flying vehicles. What do you do next?" while True: print("\n" + current_scene) # Generate and display image image = generate_image(current_scene) if image: image.show() else: print("(Unable to generate image for this scene)") prompt = f"{current_scene}\nChoose your action:\nA. Explore the city\nB. Talk to a stranger\nC. Enter a building\nD. Look at the sky\nE. Check your equipment\nF. Use your time travel device\nG. Other (specify)" user_choice = input(prompt + "\nYour choice: ").strip().upper() if user_choice == 'G': user_input = input("Specify your action: ") action = user_input else: actions = { 'A': "explore the futuristic city", 'B': "approach and talk to a strange-looking alien", 'C': "enter a nearby glowing building", 'D': "look up at the sky filled with multiple moons and unfamiliar constellations", 'E': "check your advanced multi-dimensional travel equipment", 'F': "activate your time travel device to jump to a different era" } action = actions.get(user_choice, "stand still, unsure of what to do next") # Generate next scene next_scene_prompt = f"""In an open-world game about time travel, space exploration, and multi-dimensional adventures, the player is currently in a scene where: {current_scene} The player chooses to {action}. Describe what happens next in 2-3 sentences, incorporating elements of time travel, space exploration, or dimensional shifts. Be creative and unexpected, but maintain coherence with the previous scene.""" current_scene = generate_text(next_scene_prompt) if "die" in current_scene.lower() or "game over" in current_scene.lower(): print("\n" + current_scene) print("Game Over!") break if __name__ == "__main__": main()# For most projects, this workflow file will not need changing; you simply need
+# <p>The issue in the provided code is that the <code>command[0]</code> is being compared with <code>["quit", "exit"]</code> using the <code>in</code> operator, but the variable <code>command</code> is not defined. It should be <code>command[0]</code> instead of <code>com.</code>.</p>
+<p>Here's the fixed code:</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+
+import random
+import time
+
+# Game constants and configurations
+GAME_TITLE = "Text Adventure Game"
+VERSION = "1.0"
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.health = 100
+        self.inventory = []
+
+class Room:
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+        self.exits = {}
+        self.items = []
+
+class Game:
+    def __init__(self):
+        self.player = None
+        self.rooms = {}
+        self.current_room = None
+        self.is_running = True
+
+    def setup_game(self):
+        # Create rooms
+        self.rooms = {
+            "start": Room("Starting Room", "You are in a dimly lit room. There are doors to the north and east."),
+            "north": Room("Northern Room", "You enter a cold, damp room. There's a door to the south."),
+            "east": Room("Eastern Room", "This room is filled with ancient artifacts. There's a door to the west.")
+        }
+
+        # Set up exits
+        self.rooms["start"].exits = {"north": "north", "east": "east"}
+        self.rooms["north"].exits = {"south": "start"}
+        self.rooms["east"].exits = {"west": "start"}
+
+        # Add items to rooms
+        self.rooms["north"].items.append("rusty key")
+        self.rooms["east"].items.append("golden amulet")
+
+        # Set starting room
+        self.current_room = self.rooms["start"]
+
+    def start_game(self):
+        print(f"Welcome to {GAME_TITLE} v{VERSION}")
+        player_name = input("Enter your name: ")
+        self.player = Player(player_name)
+        self.setup_game()
+        self.game_loop()
+
+    def game_loop(self):
+        while self.is_running:
+            self.display_room()
+            command = input("What would you like to do? ").lower().split()
+            
+            if len(command) == 0:
+                continue
+            
+            if command[0] in ["quit", "exit"]:
+                self.is_running = False
+            elif command[0] in ["north", "south", "east", "west"]:
+                self.move_player(command[0])
+            else:
+                print("Invalid command. Try again.")
+
+    def display_room(self):
+        print(f"\nCurrent Location: {self.current_room.name}")
+        print(self.current_room.description)
+        print("Exits:", list(self.current_room.exits.keys()))
+        print("Items:", self.current_room.items)
+
+    def move_player(self, direction):
+        if direction in self.current_room.exits:
+            next_room = self.current_room.exits[direction]
+            self.current_room = self.rooms[next_room]
+        else:
+            print("You can't go that way.")
+
+# Start the game
+game = Game()
+game.start_game()
+</code></pre>
+<p>The issue has been fixed by replacing <code>com.</code> with <code>command[0]</code> in the <code>game_loop</code> method.</p>to commit it to your repository.
+#
+# You may wish to alter this file to override the set of languages analyzed,
+# or to provide custom queries or build logic.
+#
+# ******** NOTE ********
+# We have attempted to detect the languages in your repository. Please check
+# the `language` matrix defined below to confirm you have the correct set of
+# supported CodeQL languages.
+#
+name: "CodeQL Advanced"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '30 22 * * 1'
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    # Runner size impacts CodeQL analysis time. To learn more, please see:
+    #   - https://gh.io/recommended-hardware-resources-for-running-codeql
+    #   - https://gh.io/supported-runners-and-hardware-resources
+    #   - https://gh.io/using-larger-runners (GitHub.com only)
+    # Consider using larger runners or machines with greater resources for possible analysis time improvements.
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # required to fetch internal or private CodeQL packs
+      packages: read
+
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        # CodeQL supports the following values keywords for 'language': 'c-cpp', 'csharp', 'go', 'java-kotlin', 'javascript-typescript', 'python', 'ruby', 'swift'
+        # Use `c-cpp` to analyze code written in C, C++ or both
+        # Use 'java-kotlin' to analyze code written in Java, Kotlin or both
+        # Use 'javascript-typescript' to analyze code written in JavaScript, TypeScript or both
+        # To learn more about changing the languages that are analyzed or customizing the build mode for your analysis,
+        # see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning.
+        # If you are analyzing a compiled language, you can modify the 'build-mode' for that language to customize how
+        # your codebase is analyzed, see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Initializes the CodeQL tools for scanning.
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        # If you wish to specify custom queries, you can do so here or in a config file.
+        # By default, queries listed here will override any specified in a config file.
+        # Prefix the list here with "+" to use these queries and those in the config file.
+
+        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
+        # queries: security-extended,security-and-quality
+
+    # If the analyze step fails for one of the languages you are analyzing with
+    # "We were unable to automatically build your code", modify the matrix above
+    # to set the build mode to "manual" for that language. Then modify this step
+    # to build your code.
+    # ℹ️ Command-line programs to run using the OS shell.
+    # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+    - if: matrix.build-mode == 'manual'
+      shell: bash
+      run: |
+        echo 'If you are using a "manual" build mode for one or more of the' \
+          'languages you are analyzing, replace this with the commands to build' \
+          'your code, for example:'
+        echo '  make bootstrap'
+        echo '  make release'
+        exit 1
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
